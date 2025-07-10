@@ -1,13 +1,5 @@
-<template>
-  
-</template>
+<template>About</template>
 
 <script>
-export default {
-
-}
+export default {};
 </script>
-
-<style>
-
-</style>
