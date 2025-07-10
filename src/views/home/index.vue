@@ -40,12 +40,15 @@ const searchData = reactive({
   description: ''
 });
 onMounted(() => {
+  fetchData();
+});
+const fetchData = () => {
   getProjectList().then((res) => {
     console.log(res);
     projectList.value = res;
     total.value = res.length;
   });
-});
+};
 const handleSizeChange = (val: number) => {
   console.log(val);
   searchData.pageSize = val;
@@ -63,9 +66,21 @@ const showListData = computed(() => {
   );
 });
 const onSearch = () => {
-  // getProjectList().then((res) => {
-  //   console.log(res);
-  //   projectList.value = res;
-  // });
+  if (!searchData.name && !searchData.description) {
+    return;
+  }
+  let result: IProjectListItem[] = [];
+  if (searchData.name) {
+    result = projectList.value.filter((item) => item.name.includes(searchData.name));
+  }
+  if (searchData.description) {
+    result = projectList.value.filter((item) => item.description.includes(searchData.description));
+  }
+  projectList.value = result;
+  searchData.pageNum = 1;
+  total.value = result.length;
 };
+// watch([() => searchData.name, () => searchData.description], () => {
+//   fetchData();
+// });
 </script>
