@@ -1,43 +1,71 @@
 <template>
   <div>
-    <CheckEditor v-for="item in products" :key="item.id" v-model="item.sell" v-model:desc="item.name"></CheckEditor>
-    <template v-for="(item, index) in sells" :key="item.id">
-      <span>{{ index }}</span>
-      <span>{{ item.name }}</span>
-    </template>
+    <el-form :inline="true" :model="searchData" class="demo-form-inline">
+      <el-form-item label="名称">
+        <el-input v-model="searchData.name" placeholder="Approved by" clearable />
+      </el-form-item>
+      <el-form-item label="描述">
+        <el-input v-model="searchData.description" placeholder="Approved by" clearable />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onSearch">搜索</el-button>
+      </el-form-item>
+    </el-form>
+
+    <el-table :data="showListData" border style="width: 100%">
+      <el-table-column prop="id" label="ID" width="180" />
+      <el-table-column prop="name" label="名称" width="180" />
+      <el-table-column prop="description" label="描述" />
+    </el-table>
+    <el-pagination
+      background
+      layout="prev, pager, next, sizes"
+      :total="total"
+      :page-sizes="[5, 10, 15, 20]"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
   </div>
 </template>
-<script>
-const list = [
-  {
-    id: 1,
-    sell: true,
-    name: 'xiaomin'
-  },
-  {
-    id: 2,
-    sell: false,
-    name: 'huawei'
-  },
-  {
-    id: 3,
-    sell: false,
-    name: 'iphone'
-  }
-];
-import { ref, computed } from 'vue';
-import CheckEditor from './components/CheckEditor.vue';
-export default {
-  components: {
-    CheckEditor
-  },
-  setup() {
-    const productsRef = ref(list);
-    const sellProducts = computed(() => productsRef.value.filter((item) => item.sell));
-    return {
-      products: productsRef,
-      sells: sellProducts
-    };
-  }
+<script setup lang="ts">
+import { ref, computed, onMounted, reactive } from 'vue';
+import { getProjectList, IProjectListItem } from '@/api/project';
+
+const projectList = ref<IProjectListItem[]>([]);
+const total = ref<number>(0);
+const searchData = reactive({
+  pageNum: 1,
+  pageSize: 10,
+  name: '',
+  description: ''
+});
+onMounted(() => {
+  getProjectList().then((res) => {
+    console.log(res);
+    projectList.value = res;
+    total.value = res.length;
+  });
+});
+const handleSizeChange = (val: number) => {
+  console.log(val);
+  searchData.pageSize = val;
+};
+const handleCurrentChange = (val: number) => {
+  console.log(val);
+
+  searchData.pageNum = val;
+};
+// 根据当前页数、页码、搜索条件获取列表数据
+const showListData = computed(() => {
+  return projectList.value.slice(
+    (searchData.pageNum - 1) * searchData.pageSize,
+    searchData.pageNum * searchData.pageSize
+  );
+});
+const onSearch = () => {
+  // getProjectList().then((res) => {
+  //   console.log(res);
+  //   projectList.value = res;
+  // });
 };
 </script>
