@@ -18,9 +18,10 @@
 </template>
 <script lang="ts" setup>
 import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
 import { User, Lock } from '@element-plus/icons-vue';
 import { useUserStore } from '@/store/user/index';
-import router from '@/router';
+const router = useRouter();
 const userStore = useUserStore();
 const userInfo = reactive({
   username: '',
