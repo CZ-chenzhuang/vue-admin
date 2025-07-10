@@ -6,18 +6,9 @@
       </el-header>
       <el-container>
         <el-aside width="200px">
-          <el-menu default-active="" class="el-menu-vertical-demo">
-            <el-menu-item index="1">
-              <span>项目介绍</span>
-            </el-menu-item>
-            <el-menu-item index="2">
-              <span>用户</span>
-            </el-menu-item>
-            <el-menu-item index="3">
-              <span>角色</span>
-            </el-menu-item>
-            <el-menu-item index="4">
-              <span>权限</span>
+          <el-menu router :default-active="activePath" class="el-menu-vertical-demo">
+            <el-menu-item v-for="item in menuList" :index="item.path" :key="item.path">
+              <span>{{ item.meta.title }}</span>
             </el-menu-item>
           </el-menu>
         </el-aside>
@@ -29,7 +20,15 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { useRoute, useRouter } from 'vue-router';
 import Header from './components/Header.vue';
+const route = useRoute();
+const router = useRouter();
+const menuList = router.getRoutes().filter((item) => {
+  return item.meta.isShow;
+});
+const activePath = route.path;
+console.log(menuList, 'menuList');
 </script>
 <style scoped lang="less">
 .common-layout {
