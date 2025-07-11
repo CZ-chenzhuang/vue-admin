@@ -53,6 +53,13 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         }
       }
     },
+    css: {
+      preprocessorOptions: {
+        less: {
+          additionalData: `@import "@/styles/variable.less";`
+        }
+      }
+    },
     build: {
       // 构建后是否生成 source map 文件
       sourcemap: false,
